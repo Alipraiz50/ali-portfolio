@@ -1,0 +1,119 @@
+import React, { useEffect, useRef } from "react";
+import {
+  HomeIcon,
+  UserCircleIcon,
+  CodeIcon,
+  MailIcon,
+  UserCog,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+interface NavBarProps {
+  theme: "light" | "dark";
+  setTheme: React.Dispatch<React.SetStateAction<"light" | "dark">>;
+  scrollContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+const NavBar: React.FC<NavBarProps> = ({
+  theme,
+  setTheme,
+  scrollContainerRef,
+}) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/click-sound.mp3"); // Preload sound
+  }, []);
+
+  const toggleTheme = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
+    setTheme(theme === "light" ? "dark" : "light");
+    localStorage.setItem("theme", theme === "light" ? "dark" : "light");
+  };
+
+  const changeSection = (section: string) => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+    }
+    const sectionElement = document.getElementById(section);
+    if (section && scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: sectionElement?.offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  return (
+    <div className="flex w-full fixed bottom-0 md:bottom-4">
+      <motion.nav
+        className={`bg-gray-300 dark:text-white dark:bg-black/60 backdrop-blur-md rounded-full px-6 py-2 shadow-lg flex justify-between items-center w-[90%] mx-auto md:w-[380px] md:px-8 md:py-3 md:gap-2 max-w-[450px]`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <button
+          onClick={() => changeSection("home")}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          <HomeIcon className="h-5 w-5" />
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Home
+          </span>
+        </button>
+        <button
+          onClick={() => changeSection("who-am-i")}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          <UserCircleIcon className="h-5 w-5" />
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            About Me
+          </span>
+        </button>
+        <button
+          onClick={() => changeSection("what-can-i-do")}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          <UserCog className="h-5 w-5" />
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Skills
+          </span>
+        </button>
+        <button
+          onClick={() => changeSection("what-i-have-built")}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          <CodeIcon className="h-5 w-5" />
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Projects
+          </span>
+        </button>
+        <button
+          onClick={() => changeSection("contact-me")}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          <MailIcon className="h-5 w-5" />
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Contact
+          </span>
+        </button>
+        <button
+          onClick={toggleTheme}
+          className="group relative p-2 rounded-full hover:bg-blue-100 dark:hover:bg-gray-800 transition"
+        >
+          {theme === "light" ? "🌙" : "☀️"}
+          <span className="absolute bottom-full left-0 mb-4 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Theme
+          </span>
+        </button>
+      </motion.nav>
+      <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-[80px] h-[3px] rounded-full mt-2 bg-[#b4aeae]"></div>
+    </div>
+  );
+};
+
+export default NavBar;
